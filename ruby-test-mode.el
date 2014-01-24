@@ -68,6 +68,12 @@ minor mode."
   :type '(list)
   :group 'ruby-test)
 
+(defcustom ruby-test-default-spec-command
+  "bundle exec ruby"
+  "Default rspec command"
+  :type 'string
+  :group 'ruby-test)
+
 (defcustom ruby-test-implementation-filename-mapping
   '(
     ("\\(.*\\)\\(spec/controllers/\\)\\(.*\\)\\([^/]*\\)\\(_routing_spec\\)\\(\\.rb\\)$" "\\1config/routes.rb")
@@ -265,13 +271,10 @@ depending on the filename."
 
 (defun ruby-test-spec-command (filename &optional line-number)
   (let (command options)
-    (if (file-exists-p ".zeus.sock")
-        (setq command "zeus rspec")
-      (setq command "bundle exec rspec"))
     (setq options (cons "-b" options))
     (if line-number
         (setq options (cons "--line" (cons (format "%d" line-number) options))))
-    (format "%s %s %s" command (mapconcat 'identity options " ") filename)))
+    (format "%s %s %s" ruby-test-default-spec-command (mapconcat 'identity options " ") filename)))
 
 (defun ruby-test-test-command (filename &optional line-number)
   (let (command options name-options)
